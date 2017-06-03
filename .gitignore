@@ -6,8 +6,8 @@
 # if the pattern does not contain a slash, it is matched against the file name in all directories
 # https://stackoverflow.com/questions/107701/how-can-i-remove-ds-store-files-from-a-git-repository
 
-# IDEA config files
-.idea/
+# IDEA config files -- STOP this will somehow prevent IntelliJ from working properly
+# .idea/
 
 # vim temp and swap files
 *~

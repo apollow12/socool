@@ -1,10 +1,10 @@
-package main.log;
+package main.common.log;
 
-import main.common.log.LogFileWriter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import main.common.log.LogFileWriter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,7 +14,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Created on 5/27/17.
+ * Created on 6/3/17.
  */
 class LogFileWriterTest {
 
