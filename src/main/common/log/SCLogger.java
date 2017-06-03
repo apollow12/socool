@@ -1,4 +1,4 @@
-package main.log;
+package main.common.log;
 
 /**
  * Created on 5/27/17.

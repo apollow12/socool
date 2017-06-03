@@ -1,6 +1,6 @@
 package main.crawler;
 
-import main.log.SCLogger;
+import main.common.log.SCLogger;
 
 import java.io.File;
 import java.io.IOException;

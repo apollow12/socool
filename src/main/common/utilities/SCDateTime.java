@@ -1,4 +1,4 @@
-package main.utilities;
+package main.common.utilities;
 
 //import org.jetbrains.annotations.NotNull;
 

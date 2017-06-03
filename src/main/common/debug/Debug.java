@@ -1,6 +1,6 @@
-package main.debug;
+package main.common.debug;
 
-import main.utilities.SCDateTime;
+import main.common.utilities.SCDateTime;
 
 /**
  * For ease of debug

@@ -1,9 +1,9 @@
-package main.config;
+package main.common.config;
 
-import main.debug.Debug;
-import main.log.StandardOutputLogger;
-import main.utilities.SCDateTime;
-import main.utilities.SCString;
+import main.common.debug.Debug;
+import main.common.log.StandardOutputLogger;
+import main.common.utilities.SCDateTime;
+import main.common.utilities.SCString;
 
 import java.io.IOException;
 

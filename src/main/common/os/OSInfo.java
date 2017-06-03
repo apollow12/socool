@@ -1,4 +1,4 @@
-package main.os;
+package main.common.os;
 
 /**
  * Get the information of the Operating System

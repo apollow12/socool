@@ -1,9 +1,9 @@
 package main;
 
-import main.config.Config;
+import main.common.config.Config;
 import main.crawler.DirExplorer;
 import main.crawler.DirectoryExplorer;
-import main.log.SCLogger;
+import main.common.log.SCLogger;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;

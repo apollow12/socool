@@ -1,4 +1,4 @@
-package main.log;
+package main.common.log;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;

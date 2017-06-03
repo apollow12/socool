@@ -3,7 +3,7 @@ package main.common;
 import java.io.File;
 import java.util.HashMap;
 
-import main.os.OSInfo;
+import main.common.os.OSInfo;
 
 public class FileType
 {	

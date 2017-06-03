@@ -1,4 +1,4 @@
-package main.log;
+package main.common.log;
 
 public class StandardOutputLogger extends AbstractLogger {
 

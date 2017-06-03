@@ -1,8 +1,8 @@
-package main.log;
+package main.common.log;
 
-import main.os.ComputerName;
-import main.os.OSInfo;
-import main.utilities.SCDateTime;
+import main.common.os.ComputerName;
+import main.common.os.OSInfo;
+import main.common.utilities.SCDateTime;
 
 public abstract class AbstractLogger {
 

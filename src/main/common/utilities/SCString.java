@@ -1,4 +1,4 @@
-package main.utilities;
+package main.common.utilities;
 
 /**
  * Created on 5/27/17.
