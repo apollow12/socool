@@ -9,6 +9,11 @@
 # IDEA config files
 .idea/
 
+# vim temp and swap files
+*~
+*.swp
+*.swo
+
 # socool log files
 *.log.txt
 
