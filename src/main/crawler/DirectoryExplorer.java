@@ -12,6 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The explore find all files under a given path (with excluding paths).
@@ -19,27 +20,25 @@ import java.util.concurrent.ExecutorService;
  */
 public class DirectoryExplorer extends StatefulStoppableRunner implements Runnable {
 
+    SCLogger LOG = SCLogger.getInstance();
+
     /**
      * lock of super.mState
      */
     private Object mStateLock = new Object();
 
-    /**
-     * Queue containing paths to found files
-     */
-    private BlockingQueue<String> mExploredFileQueue;
     private ExecutorService mExecuterService;
-
-    /**
-     * Controlling messages in queue
-     */
-    public static final String STOP_EXPLORER = "STOP_EXPLORER";
 
     /**
      * Paths for explore
      */
     private String mExploreRootPath;
     private String[] mExcludedPaths;
+
+    /**
+     * Discovered file paths
+     */
+    private BlockingQueue<String> mDiscoveredFilePathsQueue;
 
     /**
      * Statistics
@@ -49,15 +48,33 @@ public class DirectoryExplorer extends StatefulStoppableRunner implements Runnab
     private long mStartTimestamp = 0;
     private long mEndTimestamp = 0;
 
+    public long getFileCount() {
+        return mCountFile;
+    }
 
+    public long getDirCount() {
+        return mCountDir;
+    }
 
+    public long timespent() {
+        return mEndTimestamp - mStartTimestamp;
+    }
 
     //region Instance
 
-    public DirectoryExplorer(String rootPath, String[] excludedPaths, BlockingQueue<String> filePathsQueue) {
+    /**
+     * Set up a directory explore. It will find all files under the rootPath and
+     * given the file paths to the file reader(s) to do actual content crawling.
+     * @param rootPath the path to explore
+     * @param excludedPaths the paths that the explore won't explore
+     */
+    public DirectoryExplorer(String rootPath, String[] excludedPaths, BlockingQueue<String> outputPathQueue) {
         mExploreRootPath = rootPath;
         mExcludedPaths = excludedPaths;
-        mExploredFileQueue = filePathsQueue;
+
+        mDiscoveredFilePathsQueue = outputPathQueue;
+
+        mExecuterService = Executors.newSingleThreadExecutor();
     }
     //endregion
 
@@ -69,8 +86,6 @@ public class DirectoryExplorer extends StatefulStoppableRunner implements Runnab
             if (!canStart()) {
                 return;
             }
-
-
 
             mExecuterService.execute(this);
 
@@ -85,10 +100,9 @@ public class DirectoryExplorer extends StatefulStoppableRunner implements Runnab
                 return;
             }
 
-            mExploredFileQueue.offer(STOP_EXPLORER);
-
             super.changeStateToStopped();
         }
+        mExecuterService.shutdown();
     }
 
     @Override
@@ -113,24 +127,7 @@ public class DirectoryExplorer extends StatefulStoppableRunner implements Runnab
      */
     @Override
     public void run() {
-        while (true) {
-            try {
-                // wait indefinitely if queue is empty
-                String filePath = this.mExploredFileQueue.take();
-
-                if (filePath.equals(STOP_EXPLORER)) {
-                    // stop run()
-                    return;
-                } else {
-                    // process a file path
-                }
-
-                // TODO
-
-            } catch (InterruptedException ie) {
-                SCLogger.getInstance().logError(ie.getLocalizedMessage());
-            }
-        }
+        doExploreNIO(mExploreRootPath, mExcludedPaths);
     }
 
     /**
@@ -163,7 +160,15 @@ public class DirectoryExplorer extends StatefulStoppableRunner implements Runnab
                 File curFile = file.toFile();
 
                 visitFile_NIO(curFile);
-                return super.visitFile(file, attrs);
+
+                // check whether to stop
+                synchronized (mStateLock) {
+                    if (getState() == State.STOPPED) {
+                        return FileVisitResult.TERMINATE;
+                    } else {
+                        return super.visitFile(file, attrs);
+                    }
+                }
             }
 
             /**
@@ -188,7 +193,14 @@ public class DirectoryExplorer extends StatefulStoppableRunner implements Runnab
                     System.out.println("Cur dir: " + dir.toString());
                 }
 
-                return super.preVisitDirectory(dir, attrs);
+                // check whether to stop
+                synchronized (mStateLock) {
+                    if (getState() == State.STOPPED) {
+                        return FileVisitResult.TERMINATE;
+                    } else {
+                        return super.preVisitDirectory(dir, attrs);
+                    }
+                }
             }
         };
 
@@ -203,6 +215,8 @@ public class DirectoryExplorer extends StatefulStoppableRunner implements Runnab
     }
 
     private void visitFile_NIO(File file) {
+        mDiscoveredFilePathsQueue.offer(file.getAbsolutePath()); // fail if no space is available
+
         mCountFile ++;
         if (mCountFile % 1000 == 0) {
             System.out.print(".");

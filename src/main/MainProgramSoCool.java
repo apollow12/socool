@@ -2,9 +2,12 @@ package main;
 
 import main.config.Config;
 import main.crawler.DirExplorer;
+import main.crawler.DirectoryExplorer;
 import main.log.SCLogger;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This project cannot be for any commercial use without the permission of the author
@@ -34,7 +37,8 @@ public class MainProgramSoCool {
 
         stopLogger();
 
-        testDirExplore();
+//        testDirExplore();
+        testDirectoryExploreWithExecuterService();
     }
 
     /**
@@ -89,6 +93,27 @@ public class MainProgramSoCool {
         System.out.println("File count new IO: " + de.getCount_file());
         System.out.println("Dir count: " + de.getCount_dir());
         System.out.println("Time spent: " + de.timespent() + " ms");
+    }
+
+    private static void testDirectoryExploreWithExecuterService() {
+        String path = "/Users/yifan";
+        String[] excludedDirPaths = new String[]{"/Users/yifan/abc"};
+
+        BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
+        DirectoryExplorer de = new DirectoryExplorer(path, excludedDirPaths, queue);
+        de.start();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+        de.stop();
+
+        System.out.println("File count new IO: " + de.getFileCount());
+        System.out.println("Dir count: " + de.getDirCount());
+        System.out.println("Time spent: " + de.timespent() + " ms");
+        System.out.println("Queue size: " + queue.size());
     }
 }
 

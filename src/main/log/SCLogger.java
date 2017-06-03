@@ -7,15 +7,14 @@ package main.log;
  */
 public class SCLogger extends AbstractLogger {
 
-    /*
-        Properties
-     */
+    //region Properties
     StandardOutputLogger mSTDOutLogger = null;
     FileLogger mFileLogger = null;
 
-    /*
-        Getting instance
-     */
+    //endregion
+
+
+    //region Getting instance
     private SCLogger() {}
 
     private void init(String logFileName) {
@@ -53,9 +52,10 @@ public class SCLogger extends AbstractLogger {
         return LazyHolder.INSTANCE;
     }
 
-    /*
-        Functions
-     */
+    //endregion
+
+
+    //region Functions
 
     @Override
     protected void log(String msg) {
@@ -106,4 +106,6 @@ public class SCLogger extends AbstractLogger {
             mFileLogger.shutdown();
         }
     }
+
+    //endregion
 }
